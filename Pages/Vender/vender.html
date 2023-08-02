@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio</title>
+    <!-- Link to Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+    />
+    <!-- Custom CSS for sidebar -->
+    <link rel="stylesheet" href="vender.css" />
+  </head>
+
+  <body>
+    <!-- Sidebar -->
+    <nav id="sidebar" class="bg-light">
+      <div class="sidebar-header">
+        <h3>Plancha2</h3>
+      </div>
+
+      <ul class="list-unstyled components">
+        <!-- Sidebar links -->
+        <li>
+          <a href="../Inicio/inicio.html">
+            <i class="bi bi-house me-3"></i>
+            Inicio
+          </a>
+        </li>
+        <li>
+          <a href="vender.html">
+            <i class="bi bi-cash-coin me-3"></i>
+            Vender
+          </a>
+        </li>
+        <li>
+          <a href="../Reportes/reportes.html">
+            <i class="bi bi-bar-chart-line me-3"></i>
+            Remisiones
+          </a>
+        </li>
+        <li>
+          <a href="../Registros/registros.html">
+            <i class="bi bi-table me-3"></i>
+            Registros
+          </a>
+        </li>
+        <li>
+          <a href="../Login/login.html">
+            <i class="bi bi-box-arrow-right me-3"></i>
+            Salir
+          </a>
+        </li>
+        <!-- Add more sidebar links as needed -->
+      </ul>
+    </nav>
+
+    <!-- Page content -->
+    <div id="content">
+      <div class="container-fluid">
+        <h1>Vender</h1>
+        <!-- Sale Form -->
+        <form id="vender-form">
+          <div class="row">
+            <div class="mb-3 mt-5 col-6">
+              <label for="fecha">Fecha de recepción</label>
+              <input
+                type="date"
+                id="fecha-recepcion"
+                name="fecha-recepcion"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3 mt-5 col-6">
+              <label for="cliente">Cliente</label>
+              <input
+                type="text"
+                id="cliente"
+                name="cliente"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+          <div class="row mt-3 mb-4">
+            <div class="mb-3 col-6">
+              <label for="telefono">Teléfono</label>
+              <input
+                type="tel"
+                id="telefono"
+                name="telefono"
+                class="form-control"
+              />
+            </div>
+            <div class="mb-3 col-6">
+              <label for="domicilio">Domicilio</label>
+              <input
+                type="text"
+                id="domicilio"
+                name="domicilio"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <!-- Table for services -->
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Servicio</th>
+                <th>Cantidad</th>
+                <th>Importe</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="services-table">
+              <!-- Contenido de la tabla -->
+            </tbody>
+          </table>
+
+          <!-- Add row button -->
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            onclick="addRow()"
+          >
+            Agregar Fila
+          </button>
+
+          <div class="mt-4 col-4">
+            <label for="fecha">Fecha de entrega</label>
+            <input
+              type="date"
+              id="fecha-entrega"
+              name="fecha-entrega"
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" value="" id="iva" />
+            <label class="form-check-label" for="iva">Agregar IVA</label>
+          </div>
+
+          <div class="row">
+            <div class="col-4">
+              <label class="mt-4" for="total">Total</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input
+                  id="total"
+                  type="number"
+                  step="0.01"
+                  class="form-control"
+                  name="total"
+                  required
+                  disabled
+                />
+              </div>
+            </div>
+
+            <div class="col-4">
+              <label class="mt-4" for="anticipo">Anticipo</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input
+                  id="anticipo"
+                  type="number"
+                  step="0.01"
+                  class="form-control"
+                  name="anticipo"
+                />
+              </div>
+            </div>
+
+            <div class="col-4">
+              <label class="mt-4" for="saldo">Saldo</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input
+                  id="saldo"
+                  type="number"
+                  step="0.01"
+                  class="form-control"
+                  name="saldo"
+                  disabled
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="d-grid mt-3 gap-2 col-4 mx-auto">
+            <button type="submit" class="btn btn-primary mt-5">
+              Confirmar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="vender.js"></script>
+    <!-- Bootstrap JS (Optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

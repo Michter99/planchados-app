@@ -1,0 +1,19 @@
+{
+    "name": "plancha2-app",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.js",
+    "scripts": {
+        "dev": "electron .",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "electron": "^25.3.1"
+    },
+    "dependencies": {
+        "mysql": "^2.18.1"
+    }
+}
