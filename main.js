@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const mysql = require("mysql");
+const fs = require("fs");
 
 let mainWindow;
 let connection; // Declare the connection variable
@@ -9,7 +10,7 @@ app.on("ready", () => {
   connection = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "password",
+    password: "Planchados123$",
     database: "planchados_db",
   });
 
@@ -51,6 +52,14 @@ function createMainWindow() {
 // Submit vender data to the database
 ipcMain.handle("submit-form", async (event, formData) => {
   const id_remision = Date.now();
+
+  formData.idRemision = id_remision;
+
+  fs.writeFileSync(
+    `./tickets/${id_remision}.txt`,
+    generateTicket(formData),
+    "utf8"
+  );
 
   const query = `INSERT INTO remisiones (id_remision, fh_recepcion, cliente, telefono, domicilio, fh_entrega, iva, total, anticipo, saldo) VALUES (?)`;
   const values = [
@@ -500,3 +509,42 @@ ipcMain.handle("fetch-stackedBarChart", (event) => {
     });
   });
 });
+
+const generateTicket = (ticketInfo) => {
+  const header = `
+Plancha2
+Augusto Rodin 306F, Col. Extremadura Insurgentes, Benito Juárez
+Tel. 55 8538 1991
+Horario:
+Lun a Vie - 9:00 a 20:00
+Sab - 9:00 a 17:00
+Dom - 10:00 a 14:00
+`;
+
+  let servicesDetails = "\n";
+
+  for (let service of ticketInfo.services) {
+    servicesDetails += `${service.servicio} (x${service.cantidad}) - $${service.importe}\n`;
+  }
+
+  const ticketDetails = `
+ID Remisión: ${ticketInfo.idRemision}
+Fecha Recepción: ${ticketInfo.fechaRecepcion}
+Cliente: ${ticketInfo.cliente}
+Teléfono: ${ticketInfo.telefono}
+Domicilio: ${ticketInfo.domicilio}
+
+-------- RESUMEN --------
+${servicesDetails}
+-------------------------
+
+Fecha Entrega: ${ticketInfo.fechaEntrega}
+
+IVA: ${ticketInfo.iva ? "Sí" : "No"}
+Total: $${ticketInfo.total}
+Anticipo: $${ticketInfo.anticipo}
+Saldo: $${ticketInfo.saldo}
+`;
+
+  return header + ticketDetails;
+};

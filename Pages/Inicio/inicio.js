@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
   ipcRenderer
     .invoke("fetch-group")
     .then((results) => {
-      console.log(results);
       showDailySummary(results);
     })
     .catch((error) => {
