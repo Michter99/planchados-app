@@ -496,7 +496,7 @@ ipcMain.handle("fetch-stackedBarChart", (event) => {
   const query = `SELECT cliente, ROUND(sum(total), 1) as importe, count(*) as remisiones
                 FROM remisiones
                 GROUP BY cliente
-                ORDER BY total DESC
+                ORDER BY importe DESC
                 LIMIT 5`;
 
   return new Promise((resolve, reject) => {
