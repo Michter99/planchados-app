@@ -5,15 +5,25 @@
     "main": "main.js",
     "scripts": {
         "dev": "electron .",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dist": "electron-builder"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "electron": "^25.3.1"
+        "electron": "^25.3.1",
+        "electron-builder": "^24.6.3",
+        "electron-packager": "^17.1.1"
     },
     "dependencies": {
+        "@vonage/server-sdk": "^3.10.0",
         "mysql": "^2.18.1"
+    },
+    "build": {
+        "appId": "your.app.id",
+        "win": {
+            "target": "nsis"
+        }
     }
 }

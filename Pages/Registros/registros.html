@@ -65,32 +65,50 @@
     <div id="content">
       <div class="container-fluid">
         <h1>Registros</h1>
-        <div id="search-container" class="mt-5">
-          <input
-            class="me-3 ps-2 pt-1 pb-1"
-            type="text"
-            id="remision-search"
-            placeholder="Buscar por remisión"
-          />
-          <input
-            class="me-3 ps-2 pt-1 pb-1"
-            type="text"
-            id="codigo-search"
-            placeholder="Buscar por código"
-          />
-          <input
-            class="me-3 ps-2 pt-1 pb-1"
-            type="text"
-            id="desc-search"
-            placeholder="Buscar por descripción"
-            style="width: 500px"
-          />
-          <button id="btn-search" class="btn">Buscar</button>
+        <div id="search-container" class="mt-5 row">
+          <div class="col-2">
+            <input
+              class="form-control"
+              type="text"
+              id="remision-search"
+              placeholder="Buscar por folio"
+            />
+          </div>
+          <div class="col-2">
+            <input
+              class="form-control"
+              type="text"
+              id="codigo-search"
+              placeholder="Buscar por código"
+            />
+          </div>
+          <div class="col-4">
+            <input
+              class="form-control"
+              type="text"
+              id="desc-search"
+              placeholder="Buscar por descripción"
+            />
+          </div>
+          <div class="col-2">
+            <select id="estado-search" class="form-select">
+              <option value="">Buscar por estado</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="Listo">Listo</option>
+              <option value="Entregado">Entregado</option>
+            </select>
+          </div>
+          <div class="col-2">
+            <button id="btn-search" class="btn btn-primary w-100">
+              Buscar
+            </button>
+          </div>
         </div>
+
         <table class="table table-striped mt-4">
           <thead>
             <tr>
-              <th class="w-25">Remisión</th>
+              <th class="w-25">Folio</th>
               <th class="w-25">Código</th>
               <th>Descripción</th>
               <th class="w-25">Estado</th>

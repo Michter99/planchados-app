@@ -325,6 +325,7 @@ function openDetailsModal(remisionId) {
             "Edredón queen",
             "Edredón king",
             "Edredón pluma",
+            "Almohada",
             "Reparación",
             "Tapete",
             "Otros",
@@ -690,6 +691,7 @@ function addRow() {
           <option value="Edredón queen">Edredón queen</option>
           <option value="Edredón king">Edredón king</option>
           <option value="Edredón pluma">Edredón pluma</option>
+          <option value="Almohada">Almohada</option>
           <option value="Reparación">Reparación</option>
           <option value="Tapete">Tapete</option>
           <option value="Otros">Otros</option>

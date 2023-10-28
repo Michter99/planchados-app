@@ -1,9 +1,16 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const mysql = require("mysql");
 const fs = require("fs");
+const { Vonage } = require("@vonage/server-sdk");
+const { send } = require("process");
 
 let mainWindow;
 let connection; // Declare the connection variable
+
+const vonage = new Vonage({
+  apiKey: "9e291f3b",
+  apiSecret: "R46AZ7pxRk9b69pe",
+});
 
 app.on("ready", () => {
   // Create the MySQL connection
@@ -111,10 +118,31 @@ ipcMain.handle("submit-form", async (event, formData) => {
         });
       })
     );
+
+    sendSMS(formData.telefono, generateTicket(formData));
   } catch (error) {
     console.error(error);
   }
 });
+
+const opts = {
+  type: "unicode",
+};
+
+async function sendSMS(to, text) {
+  const from = "Plancha2";
+
+  await vonage.sms
+    .send({ to, from, text, ...opts })
+    .then((resp) => {
+      console.log("Message sent successfully");
+      console.log(resp);
+    })
+    .catch((err) => {
+      console.log("There was an error sending the messages.");
+      console.error(err);
+    });
+}
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -346,7 +374,7 @@ ipcMain.handle("update-estado", (event, { id, estado }) => {
 ipcMain.handle("search-by-remision", (event, searchTerm) => {
   return new Promise((resolve, reject) => {
     const query = `
-      SELECT id_descripcion, descripcion, codigo, id_remision
+      SELECT *
       FROM descripciones
       WHERE id_remision LIKE ?
       LIMIT 50
@@ -367,7 +395,7 @@ ipcMain.handle("search-by-remision", (event, searchTerm) => {
 ipcMain.handle("search-by-codigo", (event, searchTerm) => {
   return new Promise((resolve, reject) => {
     const query = `
-      SELECT id_descripcion, descripcion, codigo, id_remision
+      SELECT *
       FROM descripciones
       WHERE codigo LIKE ?
       LIMIT 50
@@ -386,7 +414,7 @@ ipcMain.handle("search-by-codigo", (event, searchTerm) => {
 ipcMain.handle("search-by-descripcion", (event, searchTerm) => {
   return new Promise((resolve, reject) => {
     const query = `
-      SELECT id_descripcion, descripcion, codigo, id_remision
+      SELECT *
       FROM descripciones
       WHERE descripcion LIKE ?
       LIMIT 50
@@ -396,6 +424,25 @@ ipcMain.handle("search-by-descripcion", (event, searchTerm) => {
         console.error(
           `Error searching descriptions by descripcion: ${err.message}`
         );
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  });
+});
+
+ipcMain.handle("search-by-estado", (event, searchTerm) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT *
+      FROM descripciones
+      WHERE estado LIKE ?
+      LIMIT 50
+    `;
+    connection.query(query, [`%${searchTerm}%`], function (err, results) {
+      if (err) {
+        console.error(`Error searching descriptions by estado: ${err.message}`);
         reject(err);
       } else {
         resolve(results);
@@ -511,9 +558,8 @@ ipcMain.handle("fetch-stackedBarChart", (event) => {
 });
 
 const generateTicket = (ticketInfo) => {
-  const header = `
-Plancha2
-Augusto Rodin 306F, Col. Extremadura Insurgentes, Benito Juárez
+  const header = `Plancha2
+Augusto Rodin 306F, Col. Extremadura Insurgentes
 Tel. 55 8538 1991
 Horario:
 Lun a Vie - 9:00 a 20:00
@@ -544,6 +590,7 @@ IVA: ${ticketInfo.iva ? "Sí" : "No"}
 Total: $${ticketInfo.total}
 Anticipo: $${ticketInfo.anticipo}
 Saldo: $${ticketInfo.saldo}
+
 `;
 
   return header + ticketDetails;

@@ -60,20 +60,30 @@ document.addEventListener("DOMContentLoaded", function () {
 const inputRemision = document.getElementById("remision-search");
 const inputCodigo = document.getElementById("codigo-search");
 const inputDescripcion = document.getElementById("desc-search");
+const inputEstado = document.getElementById("estado-search");
 
 inputRemision.addEventListener("input", () => {
   inputCodigo.value = "";
   inputDescripcion.value = "";
+  inputEstado.value = "";
 });
 
 inputCodigo.addEventListener("input", () => {
   inputRemision.value = "";
   inputDescripcion.value = "";
+  inputEstado.value = "";
 });
 
 inputDescripcion.addEventListener("input", () => {
   inputRemision.value = "";
   inputCodigo.value = "";
+  inputEstado.value = "";
+});
+
+inputEstado.addEventListener("change", () => {
+  inputRemision.value = "";
+  inputCodigo.value = "";
+  inputDescripcion.value = "";
 });
 
 document.getElementById("btn-search").addEventListener("click", (e) => {
@@ -92,6 +102,12 @@ document.getElementById("btn-search").addEventListener("click", (e) => {
       .invoke("search-by-descripcion", inputDescripcion.value)
       .then(renderTable)
       .catch((err) => console.error("Error searching by descripcion:", err));
+  } else if (inputEstado.value !== "") {
+    console.log(inputEstado.value);
+    ipcRenderer
+      .invoke("search-by-estado", inputEstado.value)
+      .then(renderTable)
+      .catch((err) => console.error("Error searching by estado:", err));
   } else {
     ipcRenderer
       .invoke("fetch-descriptions")
@@ -103,4 +119,5 @@ document.getElementById("btn-search").addEventListener("click", (e) => {
   inputRemision.value = "";
   inputCodigo.value = "";
   inputDescripcion.value = "";
+  inputEstado.value = "";
 });
