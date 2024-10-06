@@ -5,21 +5,23 @@ const { Vonage } = require("@vonage/server-sdk");
 const { send } = require("process");
 
 let mainWindow;
-let connection; // Declare the connection variable
+let connection;
+
+require('dotenv').config();
 
 const vonage = new Vonage({
-  apiKey: "9e291f3b",
-  apiSecret: "R46AZ7pxRk9b69pe",
+  apiKey: process.env.VONAGE_API_KEY,
+  apiSecret: process.env.VONAGE_API_SECRET,
 });
 
 app.on("ready", () => {
-  // Create the MySQL connection
   connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "Planchados123$",
-    database: "planchados_db",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
   });
+});
 
   // Connect to the database
   connection.connect((err) => {
