@@ -129,6 +129,7 @@ document
 
     const fechaEntrega = document.getElementById("fecha-entrega");
     const iva = document.getElementById("iva");
+    const tarjeta = document.getElementById("tarjeta");
     const total = document.getElementById("total");
     const anticipo = document.getElementById("anticipo");
     const saldo = document.getElementById("saldo");
@@ -141,6 +142,7 @@ document
       services: data,
       fechaEntrega: fechaEntrega.value,
       iva: iva.checked,
+      tarjeta: tarjeta.checked,
       total: parseFloat(total.value) || 0,
       anticipo: parseFloat(anticipo.value) || 0,
       saldo: parseFloat(saldo.value) || 0,
@@ -156,6 +158,7 @@ document
         domicilio.value = "";
         fechaEntrega.value = "";
         iva.checked = false;
+        tarjeta.checked = false;
         total.value = "";
         anticipo.value = "";
         saldo.value = "";

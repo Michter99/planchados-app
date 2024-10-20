@@ -64,15 +64,14 @@ function renderResults(results) {
   // Add a row to the table for each result
   results.forEach((item) => {
     const row = document.createElement("tr");
-
     row.innerHTML = `
       <td>${item.id_remision}</td>
       <td>${item.cliente}</td>
       <td>${new Date(item.fh_recepcion).toLocaleDateString()}</td>
       <td>${new Date(item.fh_entrega).toLocaleDateString()}</td>
-      <td>$${item.total.toFixed(2)}</td>
-      <td>$${item.anticipo.toFixed(2)}</td>
-      <td>$${item.saldo.toFixed(2)}</td>
+      <td>$${Math.round(item.total, 2)}</td>
+      <td>$${Math.round(item.anticipo, 2)}</td>
+      <td>$${Math.round(item.saldo, 2)}</td>
       <td>
         <button class="btn details-button" data-id="${
           item.id_remision

@@ -1,27 +1,18 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const fs = require("fs");
-const { Vonage } = require("@vonage/server-sdk");
-const { send } = require("process");
 
 let mainWindow;
 let connection;
 
-require('dotenv').config();
-
-const vonage = new Vonage({
-  apiKey: process.env.VONAGE_API_KEY,
-  apiSecret: process.env.VONAGE_API_SECRET,
-});
-
 app.on("ready", () => {
+  // Create the MySQL connection
   connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    host: "localhost",
+    user: "root",
+    password: "Planchados123$",
+    database: "planchados_db",
   });
-});
 
   // Connect to the database
   connection.connect((err) => {
@@ -70,7 +61,7 @@ ipcMain.handle("submit-form", async (event, formData) => {
     "utf8"
   );
 
-  const query = `INSERT INTO remisiones (id_remision, fh_recepcion, cliente, telefono, domicilio, fh_entrega, iva, total, anticipo, saldo) VALUES (?)`;
+  const query = `INSERT INTO remisiones (id_remision, fh_recepcion, cliente, telefono, domicilio, fh_entrega, iva, pago_tarjeta, total, anticipo, saldo) VALUES (?)`;
   const values = [
     id_remision,
     formData.fechaRecepcion,
@@ -79,6 +70,7 @@ ipcMain.handle("submit-form", async (event, formData) => {
     formData.domicilio,
     formData.fechaEntrega,
     formData.iva ? 1 : 0,
+    formData.tarjeta ? 1 : 0,
     formData.total,
     formData.anticipo,
     formData.saldo,
@@ -121,30 +113,10 @@ ipcMain.handle("submit-form", async (event, formData) => {
       })
     );
 
-    sendSMS(formData.telefono, generateTicket(formData));
   } catch (error) {
     console.error(error);
   }
 });
-
-const opts = {
-  type: "unicode",
-};
-
-async function sendSMS(to, text) {
-  const from = "Plancha2";
-
-  await vonage.sms
-    .send({ to, from, text, ...opts })
-    .then((resp) => {
-      console.log("Message sent successfully");
-      console.log(resp);
-    })
-    .catch((err) => {
-      console.log("There was an error sending the messages.");
-      console.error(err);
-    });
-}
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -499,35 +471,50 @@ ipcMain.handle("fetch-linechart", (event) => {
 
 ipcMain.handle("fetch-piechart", (event) => {
   const query = `
-SELECT 
-  CASE 
-    WHEN servicio IN ('Edredón king', 'Edredón queen', 'Edredón matrimonial', 'Edredón individual', 'Edredón pluma') THEN 'Edredones'
-    WHEN servicio IN ('Planchado', 'Planchado regular') THEN 'Planchado'
-    WHEN servicio IN ('Tintorería', 'Tintorería regular') THEN 'Tintorería'
-    ELSE servicio
-  END as servicio,
-  ROUND((SUM(importe) / total_sum) * 100, 1) as total
-FROM 
-  remision_productos as A
-JOIN 
-  remisiones as B ON A.id_remision = B.id_remision,
-  (SELECT SUM(importe) as total_sum 
-   FROM remision_productos as A
-   JOIN remisiones as B ON A.id_remision = B.id_remision
-   WHERE YEAR(fh_recepcion) = YEAR(CURDATE()) 
-   AND MONTH(fh_recepcion) = MONTH(CURDATE())) as C
-WHERE 
-  YEAR(fh_recepcion) = YEAR(CURDATE()) 
-AND 
-  MONTH(fh_recepcion) = MONTH(CURDATE())
-GROUP BY 
-  CASE 
-    WHEN servicio IN ('Edredón king', 'Edredón queen', 'Edredón matrimonial', 'Edredón individual', 'Edredón pluma') THEN 'Edredones'
-    WHEN servicio IN ('Planchado', 'Planchado regular') THEN 'Planchado'
-    WHEN servicio IN ('Tintorería', 'Tintorería regular') THEN 'Tintorería'
-    ELSE servicio
-  END
-ORDER BY total DESC
+WITH prefiltered_data AS (
+  SELECT
+    id_remision
+  FROM remisiones
+  WHERE
+    YEAR(fh_recepcion) = YEAR(CURDATE()) 
+    AND MONTH(fh_recepcion) = MONTH(CURDATE())
+),
+
+total_per_service AS (
+  SELECT
+    CASE 
+      WHEN servicio IN ('Edredón king', 'Edredón queen', 'Edredón matrimonial', 'Edredón individual', 'Edredón pluma') THEN 'Edredones'
+      WHEN servicio IN ('Planchado', 'Planchado regular') THEN 'Planchado'
+      WHEN servicio IN ('Tintorería', 'Tintorería regular') THEN 'Tintorería'
+      ELSE servicio
+    END AS servicio,
+    SUM(importe) AS total_servicio
+  FROM
+    remision_productos AS A
+  INNER JOIN
+    prefiltered_data AS B
+    ON A.id_remision = B.id_remision
+  GROUP BY
+    servicio
+),
+
+total_overall AS (
+  SELECT
+    SUM(importe) AS total
+  FROM
+    remision_productos AS A
+  INNER JOIN
+    prefiltered_data AS B
+    ON A.id_remision = B.id_remision
+)
+
+SELECT
+  total_per_service.servicio,
+  ROUND((total_per_service.total_servicio / total_overall.total) * 100, 1) AS total
+FROM
+  total_per_service, total_overall
+ORDER BY
+  total DESC;
 `;
 
   return new Promise((resolve, reject) => {

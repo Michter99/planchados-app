@@ -42,8 +42,8 @@ function showDailySummary(results) {
   const planchado = document.getElementById("planchado");
   const tintoreria = document.getElementById("tintoreria");
   const lavado = document.getElementById("lavado");
-  planchado.innerText = results[0].Cantidad ? results[0].Cantidad : 0;
-  tintoreria.innerText = results[1].Cantidad ? results[1].Cantidad : 0;
+  planchado.innerText = Math.round(results[0].Cantidad ? results[0].Cantidad : 0, 0);
+  tintoreria.innerText = Math.round(results[1].Cantidad ? results[1].Cantidad : 0, 0);
   lavado.innerText = results[2].Cantidad ? results[2].Cantidad : 0;
 }
 
